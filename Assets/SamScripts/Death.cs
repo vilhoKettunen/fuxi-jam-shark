@@ -1,25 +1,27 @@
 using UnityEngine;
+using System.Collections;
 
 public class PlayerDeathHandler : MonoBehaviour
 {
     [Header("Death Settings")]
     public AudioClip deathSound;          // Sound to play when player dies
     public GameObject deathEffectPrefab;  // Prefab to spawn at death location
-    public float destroyDelay = 0.1f;     // Slight delay to allow sound to play
+    public float respawnDelay = 5f;       // Time before player respawns
 
     private bool isDead = false;
+public bool IsDead => isDead;
 
-    private void OnTriggerEnter(Collider other)
+    public void OnTriggerEnter(Collider other)
     {
         if (isDead) return;
 
         if (other.CompareTag("dmg"))
         {
-            Die();
+            StartCoroutine(HandleDeath());
         }
     }
 
-    private void Die()
+    public IEnumerator HandleDeath()
     {
         isDead = true;
 
@@ -27,26 +29,43 @@ public class PlayerDeathHandler : MonoBehaviour
         if (deathEffectPrefab != null)
             Instantiate(deathEffectPrefab, transform.position, Quaternion.identity);
 
-        // Play death sound
+        // Play death sound (independent of player object)
         if (deathSound != null)
         {
-            // Create a temporary AudioSource so sound plays even after player is destroyed
             GameObject soundObj = new GameObject("DeathSound");
             AudioSource source = soundObj.AddComponent<AudioSource>();
             source.clip = deathSound;
             source.Play();
-
-            // Destroy the temp sound object when done
             Destroy(soundObj, deathSound.length);
         }
 
-        // Disable player visuals & collisions
+        // Disable movement to prevent errors
+        var moveScript = GetComponent<PlayerController>();
+        if (moveScript != null)
+            moveScript.enabled = false;
+
+        // Disable visuals and collisions
         foreach (Renderer r in GetComponentsInChildren<Renderer>())
             r.enabled = false;
         foreach (Collider c in GetComponentsInChildren<Collider>())
             c.enabled = false;
 
-        // Destroy player after short delay (so sound starts cleanly)
-        gameObject.SetActive(false);
+        // Wait before respawning
+        yield return new WaitForSeconds(respawnDelay);
+
+        // Respawn at (0, 0, 0)
+        transform.position = Vector3.zero;
+
+        // Re-enable visuals and collisions
+        foreach (Renderer r in GetComponentsInChildren<Renderer>())
+            r.enabled = true;
+        foreach (Collider c in GetComponentsInChildren<Collider>())
+            c.enabled = true;
+
+        // Re-enable movement
+        if (moveScript != null)
+            moveScript.enabled = true;
+
+        isDead = false;
     }
 }
