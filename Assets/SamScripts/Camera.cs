@@ -9,6 +9,12 @@ public class SmoothCameraFollowWithLookAhead : MonoBehaviour
     public float lookAheadDistance = 2f;  // How far to look ahead based on movement
     public float lookAheadSmoothTime = 0.3f; // Smooth time for look-ahead
 
+
+
+
+
+
+
     private float velocityX = 0f;
     private float currentLookAheadX = 0f;
     private float targetLookAheadX = 0f;
