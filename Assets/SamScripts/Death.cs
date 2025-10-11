@@ -1,20 +1,34 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class PlayerDeathHandler : MonoBehaviour
 {
     [Header("Death Settings")]
-    public AudioClip deathSound;          // Sound to play when player dies
-    public GameObject deathEffectPrefab;  // Prefab to spawn at death location
-    public float respawnDelay = 5f;       // Time before player respawns
+    public AudioClip deathSound;
+    public GameObject deathEffectPrefab;
+    public float respawnDelay = 5f;
+
+    [Header("Wall Reset Settings")]
+    [Tooltip("Reference to the wall that should reset when the player dies.")]
+    public WallFollowPlayer wall; // Assign in Inspector
 
     private bool isDead = false;
-public bool IsDead => isDead;
+    public bool IsDead => isDead;
 
-    public void OnTriggerEnter(Collider other)
+    private void Awake()
+    {
+        // Auto-find wall if not assigned
+        if (wall == null)
+        {
+            wall = Object.FindFirstObjectByType<WallFollowPlayer>();
+            if (wall != null)
+                Debug.Log("✅ Wall automatically assigned to PlayerDeathHandler");
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
     {
         if (isDead) return;
-
         if (other.CompareTag("dmg"))
         {
             StartCoroutine(HandleDeath());
@@ -23,13 +37,18 @@ public bool IsDead => isDead;
 
     public IEnumerator HandleDeath()
     {
+        // ✅ Teleport the wall to its reset position immediately
+        if (wall != null)
+        {
+            wall.ResetWallPosition();
+        }
         isDead = true;
 
-        // Spawn effect
+        // Spawn death effect
         if (deathEffectPrefab != null)
             Instantiate(deathEffectPrefab, transform.position, Quaternion.identity);
 
-        // Play death sound (independent of player object)
+        // Play death sound
         if (deathSound != null)
         {
             GameObject soundObj = new GameObject("DeathSound");
@@ -39,7 +58,7 @@ public bool IsDead => isDead;
             Destroy(soundObj, deathSound.length);
         }
 
-        // Disable movement to prevent errors
+        // Disable player movement
         var moveScript = GetComponent<PlayerController>();
         if (moveScript != null)
             moveScript.enabled = false;
@@ -50,10 +69,12 @@ public bool IsDead => isDead;
         foreach (Collider c in GetComponentsInChildren<Collider>())
             c.enabled = false;
 
-        // Wait before respawning
+       
+
+        // Wait before respawn
         yield return new WaitForSeconds(respawnDelay);
 
-        // Respawn at (0, 0, 0)
+        // Respawn player
         transform.position = Vector3.zero;
 
         // Re-enable visuals and collisions
