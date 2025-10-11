@@ -28,7 +28,9 @@ public class PlayerController : MonoBehaviour
     private CharacterController controller;
     private AudioSource audioSource;
 
-    private Vector3 velocity;
+    [SerializeField] private LayerMask Ignore;
+
+    public Vector3 velocity;
     private int jumpCount = 0;
     private bool isFacingRight = true;
 
@@ -50,6 +52,8 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+       
+
         HandleDash();
         HandleMovement();
         HandleJump();
@@ -178,7 +182,7 @@ public class PlayerController : MonoBehaviour
         Vector3 start = transform.position + Vector3.up * 0.1f;
         float distance = controller.skinWidth + 0.2f;
 
-        if (Physics.SphereCast(start, radius, Vector3.down, out RaycastHit hit, distance))
+        if (Physics.SphereCast(start, radius, Vector3.down, out RaycastHit hit, distance, Ignore))
         {
             if (hit.collider.CompareTag("dmg"))
                 return false;

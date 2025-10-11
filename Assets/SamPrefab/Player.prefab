@@ -16,7 +16,6 @@ GameObject:
   - component: {fileID: 6198153903660879590}
   - component: {fileID: 3190404435750103937}
   - component: {fileID: 4496373229574792693}
-  - component: {fileID: 4503809843699150914}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -163,6 +162,10 @@ MonoBehaviour:
   dashUnlocked: 0
   jumpSound: {fileID: 8300000, guid: 87f19821c28b09b4285468514e441be1, type: 3}
   dashSound: {fileID: 8300000, guid: 8ba53e4c0101d3948808efde73776abd, type: 3}
+  Ignore:
+    serializedVersion: 2
+    m_Bits: 0
+  velocity: {x: 0, y: 0, z: 0}
 --- !u!82 &3190404435750103937
 AudioSource:
   m_ObjectHideFlags: 0
@@ -275,18 +278,3 @@ MonoBehaviour:
   deathSound: {fileID: 8300000, guid: bd8552cc0dd39b44e8bb4c12d898e637, type: 3}
   deathEffectPrefab: {fileID: 2018159748914342428, guid: a41a2b9a0f2a08b46b24b9778c9b1977, type: 3}
   respawnDelay: 5
---- !u!114 &4503809843699150914
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3074011768418920635}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9bd36b342fbf4664984afcbc8d2e8d2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetPrefabTag: Collectible
-  objectsToRemoveTag: Obstacle
-  targetCount: 3
