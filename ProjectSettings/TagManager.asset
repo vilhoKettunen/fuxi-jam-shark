@@ -6,6 +6,8 @@ TagManager:
   tags:
   - DashPowerup
   - dmg
+  - Collectible
+  - Obstacle
   layers:
   - Default
   - TransparentFX
