@@ -30,7 +30,7 @@ public class LaunchPadPrefabReady : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         audioSource.playOnAwake = false;
         audioSource.loop = false;
-        audioSource.spatialBlend = 1f; // 2D sound
+        audioSource.spatialBlend = 0f; // 2D sound
         audioSource.volume = 1f;
 
         // Ensure collider is trigger
@@ -63,6 +63,10 @@ public class LaunchPadPrefabReady : MonoBehaviour
             player.velocity.y = launchForce;
         }
 
+
+
+
+       
         
 
         // Trigger camera effects immediately
