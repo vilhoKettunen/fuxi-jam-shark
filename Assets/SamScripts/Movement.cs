@@ -28,7 +28,9 @@ public class PlayerController : MonoBehaviour
     private CharacterController controller;
     private AudioSource audioSource;
 
-    private Vector3 velocity;
+    [SerializeField] private LayerMask Ignore;
+
+    public Vector3 velocity;
     private int jumpCount = 0;
     private bool isFacingRight = true;
 
@@ -50,6 +52,8 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+       
+
         HandleDash();
         HandleMovement();
         HandleJump();
@@ -101,10 +105,13 @@ public class PlayerController : MonoBehaviour
 
     void HandleJump()
     {
-        if (controller.isGrounded)
+        bool isGrounded = IsGrounded();
+
+        if (isGrounded)
         {
             jumpCount = 0;
-            velocity.y = -1f;
+            if (velocity.y < 0f)
+                velocity.y = -1f; // small downward force to stay grounded
         }
 
         if (Input.GetButtonDown("Jump") && jumpCount < maxJumps && !isDashing)
@@ -112,7 +119,6 @@ public class PlayerController : MonoBehaviour
             velocity.y = jumpHeight;
             jumpCount++;
 
-            // Play jump sound
             if (jumpSound != null)
                 audioSource.PlayOneShot(jumpSound);
         }
@@ -126,11 +132,9 @@ public class PlayerController : MonoBehaviour
 
     void HandleDash()
     {
-        // Cooldown timer
         if (dashCooldownTimer > 0)
             dashCooldownTimer -= Time.deltaTime;
 
-        // Start dash
         if (dashUnlocked && !isDashing && dashCooldownTimer <= 0 && Input.GetButtonDown("Dash"))
         {
             isDashing = true;
@@ -140,12 +144,10 @@ public class PlayerController : MonoBehaviour
             if (dashSound != null)
                 audioSource.PlayOneShot(dashSound);
 
-            // Set dash velocity in facing direction
             float dashDir = isFacingRight ? 1f : -1f;
             velocity = new Vector3(dashDir * dashSpeed, 0f, 0f);
         }
 
-        // Continue dash
         if (isDashing)
         {
             dashTimer -= Time.deltaTime;
@@ -170,4 +172,36 @@ public class PlayerController : MonoBehaviour
             Destroy(other.gameObject);
         }
     }
+
+    /// <summary>
+    /// Custom ground detection: fails if surface is tagged "dmg"
+    /// </summary>
+    bool IsGrounded()
+    {
+        float radius = controller.radius * 0.9f;
+        Vector3 start = transform.position + Vector3.up * 0.1f;
+        float distance = controller.skinWidth + 0.2f;
+
+        if (Physics.SphereCast(start, radius, Vector3.down, out RaycastHit hit, distance, Ignore))
+        {
+            if (hit.collider.CompareTag("dmg"))
+                return false;
+
+            return true;
+        }
+
+        return false;
+    }
+
+#if UNITY_EDITOR
+    void OnDrawGizmosSelected()
+    {
+        if (controller == null) return;
+        Gizmos.color = Color.yellow;
+        float radius = controller.radius * 0.9f;
+        Vector3 start = transform.position + Vector3.up * 0.1f;
+        float distance = controller.skinWidth + 0.2f;
+        Gizmos.DrawWireSphere(start + Vector3.down * distance, radius);
+    }
+#endif
 }
