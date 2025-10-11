@@ -10,7 +10,7 @@ public class WallFollowPlayer : MonoBehaviour
     [Tooltip("How fast the wall moves toward the player.")]
     public float speed = 5f;
 
-    [Tooltip("Minimum distance the wall maintains from the player.")]
+    [Tooltip("Maximum distance the wall can be from the player.")]
     public float maxDistance = 10f;
 
     [Header("Spawn & Reset Settings")]
@@ -33,11 +33,19 @@ public class WallFollowPlayer : MonoBehaviour
     {
         if (player == null || isWaitingToRespawn) return;
 
-        // Move the wall toward the player along X only
+        // ✅ If wall ever passes the player on the X axis, reset it immediately
+        if (transform.position.x > player.position.x)
+        {
+            Debug.Log("⚠️ Wall moved ahead of the player — resetting behind.");
+            ResetWallPosition();
+            return; // stop further movement this frame
+        }
+
+        // Move toward the player along the X axis
         float direction = Mathf.Sign(player.position.x - transform.position.x);
         transform.position += Vector3.right * direction * speed * Time.deltaTime;
 
-        // Clamp max distance so the wall doesn't get too far away
+        // Clamp to max distance
         float currentDistance = Mathf.Abs(player.position.x - transform.position.x);
         if (currentDistance > maxDistance)
         {
@@ -56,7 +64,7 @@ public class WallFollowPlayer : MonoBehaviour
         PlayerDeathHandler deathHandler = other.GetComponent<PlayerDeathHandler>();
         if (deathHandler != null)
         {
-            // Link wall so player death can also reset it
+            // Ensure wall reference is linked for death resets
             deathHandler.wall = this;
             StartCoroutine(deathHandler.HandleDeath());
         }
@@ -65,7 +73,7 @@ public class WallFollowPlayer : MonoBehaviour
             Debug.LogWarning("⚠️ Player does not have a PlayerDeathHandler component!");
         }
 
-        // Start wall respawn coroutine
+        // Start respawn delay
         if (respawnCoroutine != null)
             StopCoroutine(respawnCoroutine);
 
@@ -81,7 +89,7 @@ public class WallFollowPlayer : MonoBehaviour
     }
 
     /// <summary>
-    /// Teleports the wall to its reset position — always on the left side of the player or reset point.
+    /// Resets the wall behind the player or at the designated reset point.
     /// </summary>
     public void ResetWallPosition()
     {
@@ -93,38 +101,43 @@ public class WallFollowPlayer : MonoBehaviour
 
         isWaitingToRespawn = false;
 
+        if (player == null)
+        {
+            Debug.LogError("❌ No player assigned for wall reset.");
+            return;
+        }
+
+        Vector3 newPos;
+
+        // If a reset point is assigned, use that.
         if (resetPoint != null)
         {
-            // ✅ Use the reset point if defined
-            transform.position = resetPoint.position;
-            Debug.Log($"🧱 Wall reset to designated reset point: {resetPoint.position}");
+            newPos = resetPoint.position;
+            Debug.Log($"🧱 Wall reset to designated reset point: {newPos}");
         }
-        else if (player != null)
+        else
         {
-            // ✅ Otherwise spawn to the left (negative X) of the player
-            Vector3 spawnPosition = new Vector3(
+            // Otherwise, always spawn to the left of the player
+            newPos = new Vector3(
                 player.position.x - spawnDistanceFromPlayer,
                 transform.position.y,
                 transform.position.z
             );
-            transform.position = spawnPosition;
-            Debug.Log($"🧱 Wall reset {spawnDistanceFromPlayer} units to the left of player at {spawnPosition}");
+            Debug.Log($"↩️ Wall reset {spawnDistanceFromPlayer} units behind player at X={newPos.x}");
         }
-        else
-        {
-            Debug.LogError("❌ No player or reset point assigned! Cannot reset wall.");
-        }
+
+        transform.position = newPos;
     }
 
     private void OnDrawGizmosSelected()
     {
         if (player != null)
         {
-            // Show max distance range (red)
+            // Max distance (red)
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(player.position, maxDistance);
 
-            // Show spawn offset (yellow)
+            // Spawn offset (yellow)
             Vector3 spawnPos = new Vector3(player.position.x - spawnDistanceFromPlayer, player.position.y, player.position.z);
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(spawnPos, 0.5f);
