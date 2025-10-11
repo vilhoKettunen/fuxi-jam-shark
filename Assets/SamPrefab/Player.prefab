@@ -159,9 +159,9 @@ MonoBehaviour:
   dashSpeed: 20
   dashDuration: 0.2
   dashCooldown: 1
-  dashUnlocked: 0
-  jumpSound: {fileID: 8300000, guid: 87f19821c28b09b4285468514e441be1, type: 3}
-  dashSound: {fileID: 8300000, guid: 8ba53e4c0101d3948808efde73776abd, type: 3}
+  dashUnlocked: 1
+  jumpSound: {fileID: 8300000, guid: 8033af7642bebe64fa43cc204e1cbf69, type: 3}
+  dashSound: {fileID: 8300000, guid: 53559f1db0a060f4a958360ded472d93, type: 3}
   Ignore:
     serializedVersion: 2
     m_Bits: 0
@@ -275,6 +275,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c61cb4fb06662747b689c8fdbf221a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  deathSound: {fileID: 8300000, guid: bd8552cc0dd39b44e8bb4c12d898e637, type: 3}
+  deathSound: {fileID: 8300000, guid: 6bdc24e15957b0e4784a0212fd208cd0, type: 3}
   deathEffectPrefab: {fileID: 2018159748914342428, guid: a41a2b9a0f2a08b46b24b9778c9b1977, type: 3}
   respawnDelay: 5
+  wall: {fileID: 0}
