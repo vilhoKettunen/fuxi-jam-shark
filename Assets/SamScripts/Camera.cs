@@ -127,5 +127,10 @@ public class SmoothCameraFollowWithLookAhead : MonoBehaviour
         cam.fieldOfView = originalFOV;
         fovCoroutine = null;
     }
+
+    internal void ZoomFOV(float fovZoomAmount)
+    {
+        throw new System.NotImplementedException();
+    }
     #endregion
 }
