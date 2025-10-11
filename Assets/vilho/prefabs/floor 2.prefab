@@ -10,8 +10,12 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 634652085538602742, guid: 7e2303b4c969b4d46b2cbdef52c04b00, type: 3}
       propertyPath: m_Name
-      value: floor 2 Variant
+      value: floor 2
       objectReference: {fileID: 0}
+    - target: {fileID: 7619923201253144105, guid: 7e2303b4c969b4d46b2cbdef52c04b00, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 987b789f5c1860b48922ebe69cec6a86, type: 2}
     - target: {fileID: 9158636261474595706, guid: 7e2303b4c969b4d46b2cbdef52c04b00, type: 3}
       propertyPath: m_LocalScale.x
       value: 2
