@@ -17,6 +17,10 @@ public class EyeFollowPlayer_SmartSmooth : MonoBehaviour
     [Tooltip("Vertical follow amount (0 = no movement, 1 = fully follow).")]
     public float verticalFollowAmount = 0.8f;
 
+    [Header("Position Offset")]
+    [Tooltip("Offset from the player's position (e.g., to be above the player).")]
+    public Vector3 playerOffset = new Vector3(0f, 1f, 0f);
+
     [Tooltip("How much faster the eye follows when player is falling.")]
     public float fallSpeedMultiplier = 1.5f;
 
@@ -50,11 +54,11 @@ public class EyeFollowPlayer_SmartSmooth : MonoBehaviour
         verticalVelocity = (player.position.y - previousPlayerPosition.y) / Time.deltaTime;
         previousPlayerPosition = player.position;
 
-        // Target position with horizontal and vertical follow
+        // Target position with horizontal, vertical follow, and offset
         Vector3 targetPos = new Vector3(
-            initialPosition.x + (player.position.x - initialPosition.x) * horizontalFollowAmount,
-            initialPosition.y + (player.position.y - initialPosition.y) * verticalFollowAmount,
-            initialPosition.z
+            initialPosition.x + (player.position.x - initialPosition.x) * horizontalFollowAmount + playerOffset.x,
+            initialPosition.y + (player.position.y - initialPosition.y) * verticalFollowAmount + playerOffset.y,
+            initialPosition.z + playerOffset.z
         );
 
         // Distance between eye and target
@@ -62,10 +66,8 @@ public class EyeFollowPlayer_SmartSmooth : MonoBehaviour
 
         // Adaptive smooth time
         float smoothTime = baseSmoothTime;
-
         if (distance > catchUpDistance)
             smoothTime *= 0.5f; // tighten catch-up
-
         if (verticalVelocity < -0.1f)
             smoothTime /= fallSpeedMultiplier;
 
