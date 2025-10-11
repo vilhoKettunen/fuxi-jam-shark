@@ -6,39 +6,29 @@ using UnityEngine.UI;
 public class BlinkTimerController : MonoBehaviour
 {
     [Header("UI Elements")]
-    [Tooltip("Colored UI blocks that will blink before activation.")]
     public List<GameObject> blinkObjects = new List<GameObject>();
-
-    [Tooltip("Slider showing countdown until activation.")]
     public Slider countdownSlider;
-
-    [Tooltip("Slider showing remaining active time.")]
     public Slider activeTimeSlider;
 
     [Header("Timing Settings")]
-    [Tooltip("Total time (in seconds) until activation.")]
     public float totalTime = 30f;
-
-    [Tooltip("Random time range for the next cycle (min & max).")]
     public Vector2 randomCycleRange = new Vector2(20f, 40f);
-
-    [Tooltip("Time (in seconds) before activation when blinking starts.")]
     public float preBlinkTime = 6f;
-
-    [Tooltip("How long the system stays 'active' after activation (seconds).")]
     public float activeTime = 5f;
-
-    [Tooltip("How long each color stays ON during blinking.")]
     public float blinkOnTime = 1f;
-
-    [Tooltip("How long all colors stay OFF during blinking.")]
     public float blinkOffTime = 1f;
+
+    [Header("Player Settings")]
+    [Tooltip("Tag of the player object to affect")]
+    public string playerTag = "Player";
 
     private float countdownTimer;
     private float activeTimer;
     private bool isBlinking = false;
     private bool isActive = false;
     private int currentBlinkIndex = 0;
+
+    private Coroutine activePhaseLoop; // 🔁 Reference to active loop coroutine
 
     private void Start()
     {
@@ -61,7 +51,6 @@ public class BlinkTimerController : MonoBehaviour
     {
         countdownTimer -= Time.deltaTime;
 
-        // Update countdown slider
         if (countdownSlider != null)
             countdownSlider.value = countdownTimer;
 
@@ -94,7 +83,6 @@ public class BlinkTimerController : MonoBehaviour
 
     private void StartNewCycle()
     {
-        // Pick a random total time for this cycle
         totalTime = Random.Range(randomCycleRange.x, randomCycleRange.y);
         countdownTimer = totalTime;
         activeTimer = activeTime;
@@ -102,7 +90,6 @@ public class BlinkTimerController : MonoBehaviour
         isActive = false;
         currentBlinkIndex = 0;
 
-        // Update sliders
         if (countdownSlider != null)
         {
             countdownSlider.minValue = 0f;
@@ -117,7 +104,6 @@ public class BlinkTimerController : MonoBehaviour
             activeTimeSlider.value = activeTime;
         }
 
-        // Make sure all are off
         SetAllBlinkObjectsActive(false);
     }
 
@@ -128,18 +114,13 @@ public class BlinkTimerController : MonoBehaviour
             if (blinkObjects.Count == 0)
                 yield break;
 
-            // Turn off all first
             SetAllBlinkObjectsActive(false);
-
-            // Turn on current
             blinkObjects[currentBlinkIndex].SetActive(true);
             yield return new WaitForSeconds(blinkOnTime);
 
-            // Turn all off
             SetAllBlinkObjectsActive(false);
             yield return new WaitForSeconds(blinkOffTime);
 
-            // Move to next color
             currentBlinkIndex = (currentBlinkIndex + 1) % blinkObjects.Count;
         }
     }
@@ -151,17 +132,79 @@ public class BlinkTimerController : MonoBehaviour
         StopAllCoroutines(); // stop blinking
         SetAllBlinkObjectsActive(true);
 
-        // Reset active timer and slider
+        // Reset active timer
         activeTimer = activeTime;
         if (activeTimeSlider != null)
             activeTimeSlider.value = activeTimer;
+
+        // 🔁 Start listening for input that kills player
+        if (activePhaseLoop != null)
+            StopCoroutine(activePhaseLoop);
+        activePhaseLoop = StartCoroutine(ActivePhaseInputLoop());
     }
 
     private void EndActivePhase()
     {
         Debug.Log("🔁 Active time ended, restarting cycle.");
+        isActive = false;
+
+        // Stop input loop
+        if (activePhaseLoop != null)
+        {
+            StopCoroutine(activePhaseLoop);
+            activePhaseLoop = null;
+        }
+
         SetAllBlinkObjectsActive(false);
         StartNewCycle();
+    }
+
+    /// <summary>
+    /// 🔁 Runs while active phase is ongoing.
+    /// Checks for player input and triggers death if detected.
+    /// </summary>
+    private IEnumerator ActivePhaseInputLoop()
+    {
+        Debug.Log("🎯 Input detection loop started.");
+
+        while (isActive)
+        {
+            // Check for any key or button press
+            if (Input.anyKeyDown)
+            {
+                Debug.Log("💀 Player pressed a button during active phase — triggering death!");
+                TriggerPlayerDeath();
+                break; // End loop after triggering death
+            }
+
+            yield return null; // wait for next frame
+        }
+
+        Debug.Log("⛔ Input detection loop ended.");
+    }
+
+    /// <summary>
+    /// Finds the player and triggers their death handler.
+    /// </summary>
+    private void TriggerPlayerDeath()
+    {
+        GameObject player = GameObject.FindGameObjectWithTag(playerTag);
+        if (player != null)
+        {
+            PlayerDeathHandler deathHandler = player.GetComponent<PlayerDeathHandler>();
+            if (deathHandler != null)
+            {
+                StartCoroutine(deathHandler.HandleDeath());
+            }
+            else
+            {
+                Debug.LogWarning("⚠️ Player does not have a PlayerDeathHandler component!");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ No GameObject with tag '" + playerTag + "' found!");
+        }
     }
 
     private void SetAllBlinkObjectsActive(bool active)
