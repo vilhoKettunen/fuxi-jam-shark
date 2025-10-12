@@ -26,19 +26,20 @@ public class TimeController : MonoBehaviour
     public float blinkOffTime = 1f;
 
     [Header("Player Settings")]
-    [Tooltip("Tag of the player object to affect.")]
-    public string playerTag = "Player";
+    [Tooltip("Drag your Player GameObject here (must have PlayerDeathHandler).")]
+    public GameObject playerObject;
 
     [Header("Eye Settings")]
-    [Tooltip("Drag your Eye GameObject here (must have EyeFollowPlayer_SmartSmooth component).")]
+    [Tooltip("Drag your Eye GameObject here (must have LookAtPlayer or EyeFollowPlayer_SmartSmooth).")]
     public GameObject eyeObject;
     [Tooltip("Offset value when active phase starts.")]
     public float activeEyeOffset = 4f;
     [Tooltip("Offset value when active phase ends.")]
     public float defaultEyeOffset = 50f;
 
-    // Cached reference to the eye follow script
+    // Cached references
     private LookAtPlayer eyeFollow;
+    private PlayerDeathHandler playerDeathHandler;
 
     private float countdownTimer;
     private float activeTimer;
@@ -50,16 +51,28 @@ public class TimeController : MonoBehaviour
 
     private void Start()
     {
-        // Auto-get the eye follow script
+        // Cache Eye script
         if (eyeObject != null)
         {
             eyeFollow = eyeObject.GetComponent<LookAtPlayer>();
             if (eyeFollow == null)
-                Debug.LogWarning("⚠️ The Eye Object does not have an EyeFollowPlayer_SmartSmooth component!");
+                Debug.LogWarning("⚠️ The Eye Object does not have a LookAtPlayer component!");
         }
         else
         {
             Debug.LogWarning("⚠️ No Eye Object assigned in TimeController!");
+        }
+
+        // Cache PlayerDeathHandler directly
+        if (playerObject != null)
+        {
+            playerDeathHandler = playerObject.GetComponent<PlayerDeathHandler>();
+            if (playerDeathHandler == null)
+                Debug.LogWarning("⚠️ Player GameObject has no PlayerDeathHandler component!");
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ No Player GameObject assigned in TimeController!");
         }
 
         StartNewCycle();
@@ -218,21 +231,13 @@ public class TimeController : MonoBehaviour
 
     private void TriggerPlayerDeath()
     {
-        GameObject player = GameObject.FindGameObjectWithTag(playerTag);
-        if (player == null)
+        if (playerDeathHandler != null)
         {
-            Debug.LogWarning($"⚠️ No GameObject with tag '{playerTag}' found!");
-            return;
-        }
-
-        PlayerDeathHandler deathHandler = player.GetComponent<PlayerDeathHandler>();
-        if (deathHandler != null)
-        {
-            StartCoroutine(deathHandler.HandleDeath());
+            StartCoroutine(playerDeathHandler.HandleDeath());
         }
         else
         {
-            Debug.LogWarning("⚠️ Player does not have a PlayerDeathHandler component!");
+            Debug.LogWarning("⚠️ No PlayerDeathHandler assigned or found on playerObject!");
         }
     }
 
