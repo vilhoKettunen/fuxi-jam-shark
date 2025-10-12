@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: fceef47e63c37514687a7e57871bec35
+guid: 2da790640067d414f9b417d2f3bc6b17
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,7 +97,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: hell1_0
+      name: hell5_0
       rect:
         serializedVersion: 2
         x: 0
@@ -112,8 +112,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 985f5faef2a37f448a9e6e941ec635bf
-      internalID: 191916051
+      spriteID: 906a433dcff35ce4eb2c2de877dd62c9
+      internalID: 635536952
       vertices: []
       indices: 
       edges: []
@@ -122,7 +122,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: ce92ea13f62382642ad0d443441758e4
+    spriteID: 58cfb8b08007e50469e816e4030212a5
     internalID: 0
     vertices: []
     indices: 
@@ -134,7 +134,7 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      hell1_0: 191916051
+      hell5_0: 635536952
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
