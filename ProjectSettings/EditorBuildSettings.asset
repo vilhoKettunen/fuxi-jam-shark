@@ -14,6 +14,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/vilho.unity
     guid: e172c713059c2a748b1fce336acaa780
+  - enabled: 1
+    path: Assets/Scenes/Victory.unity
+    guid: 48e103e6396eea3479215f18dac1eeab
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
