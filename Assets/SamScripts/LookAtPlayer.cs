@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Transform))]
-public class EyeFollowPlayer_SmartSmooth : MonoBehaviour
+public class LookAtPlayer : MonoBehaviour
 {
     [Header("References")]
     [Tooltip("The player transform the eye should follow.")]
@@ -38,13 +38,6 @@ public class EyeFollowPlayer_SmartSmooth : MonoBehaviour
     private Vector3 previousPlayerPosition;
     private float verticalVelocity;
 
-    // Smooth transition target
-    private float targetYOffset;
-
-    // Debug cycle values
-    private readonly float[] debugHeights = { 4f, 40f };
-    private int currentDebugIndex = 0;
-
     void Start()
     {
         if (player == null)
@@ -73,9 +66,6 @@ public class EyeFollowPlayer_SmartSmooth : MonoBehaviour
 
     void LateUpdate()
     {
-        // Smoothly interpolate current Y offset toward target
-        playerOffset.y = Mathf.Lerp(playerOffset.y, targetYOffset, Time.deltaTime * offsetLerpSpeed);
-
         // Track player's vertical movement
         verticalVelocity = (player.position.y - previousPlayerPosition.y) / Time.deltaTime;
         previousPlayerPosition = player.position;
@@ -109,20 +99,9 @@ public class EyeFollowPlayer_SmartSmooth : MonoBehaviour
         transform.LookAt(player);
     }
 
-    /// <summary>
-    /// Smoothly sets the Y offset of the eye relative to the player.
-    /// Only values between 4 and 50 are accepted.
-    /// Returns true if successfully set, false if out of range.
-    /// </summary>
-    public bool SetPlayerYOffset(float newYOffset)
+    // Simple API to let other scripts change the eye's vertical offset
+    public void SetPlayerYOffset(float y)
     {
-        if (newYOffset < 4f || newYOffset > 50f)
-        {
-            Debug.LogWarning($"EyeFollowPlayer_SmartSmooth: Tried to set invalid Y offset {newYOffset}. Must be between 4 and 50.");
-            return false;
-        }
-
-        targetYOffset = newYOffset;
-        return true;
+        playerOffset.y = y;
     }
 }

@@ -26,7 +26,7 @@ public class EyeFallTrigger : MonoBehaviour
         eye.position = Vector3.MoveTowards(eye.position, targetPosition, fallSpeed * Time.deltaTime);
 
         // Keep looking at the player while falling
-        if (eye.TryGetComponent<EyeFollowPlayer_SmartSmooth>(out var follow) && follow.player != null)
+        if (eye.TryGetComponent<LookAtPlayer>(out var follow) && follow.player != null)
         {
             eye.LookAt(follow.player);
         }
@@ -66,7 +66,7 @@ public class EyeFallTrigger : MonoBehaviour
         targetPosition = startPosition - new Vector3(0, fallDistance, 0);
 
         // Optionally, we could disable the SmoothFollow script to prevent it from pushing the eye
-        if (eye.TryGetComponent<EyeFollowPlayer_SmartSmooth>(out var follow))
+        if (eye.TryGetComponent<LookAtPlayer>(out var follow))
         {
             follow.enabled = false;
         }
