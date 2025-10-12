@@ -49,9 +49,9 @@ public class LookAtPlayer : MonoBehaviour
 
         initialPosition = transform.position;
         previousPlayerPosition = player.position;
-        targetYOffset = playerOffset.y;
+        //targetYOffset = playerOffset.y;
     }
-
+    /*
     void Update()
     {
         // 🔹 Debug control — press L to cycle between preset Y offsets
@@ -62,7 +62,9 @@ public class LookAtPlayer : MonoBehaviour
             SetPlayerYOffset(newValue);
             Debug.Log($"[EyeFollowPlayer_SmartSmooth] Debug Y Offset changed to: {newValue}");
         }
+
     }
+       */
 
     void LateUpdate()
     {
