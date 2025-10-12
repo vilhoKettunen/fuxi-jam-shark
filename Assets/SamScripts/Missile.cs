@@ -4,7 +4,6 @@ using UnityEngine;
 public class MissileSeek : MonoBehaviour
 {
     [Header("Targeting")]
-    public Transform target;
     public float speed = 10f;
     public float rotateSpeed = 3f;
     public float lifetime = 10f;
@@ -24,8 +23,17 @@ public class MissileSeek : MonoBehaviour
     private float fixedZ;
     private Vector3 driftOffset;
 
+    private Transform target; // now found automatically
+
     void Start()
     {
+        // Find the player by tag
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+        {
+            target = playerObj.transform;
+        }
+
         fixedZ = transform.position.z;
 
         driftOffset = new Vector3(

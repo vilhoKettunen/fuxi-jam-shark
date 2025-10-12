@@ -6,6 +6,7 @@ public class EyeFollowPlayer_SmartSmooth : MonoBehaviour
     [Header("References")]
     [Tooltip("The player transform the eye should follow.")]
     public Transform player;
+  
 
     [Header("Follow Settings")]
     [Tooltip("Base smooth time (lower = tighter, higher = smoother).")]
@@ -35,6 +36,8 @@ public class EyeFollowPlayer_SmartSmooth : MonoBehaviour
     private Vector3 previousPlayerPosition;
     private float verticalVelocity;
 
+    
+
     void Start()
     {
         if (player == null)
@@ -50,12 +53,14 @@ public class EyeFollowPlayer_SmartSmooth : MonoBehaviour
 
     void LateUpdate()
     {
+
+        
         // Track player's vertical movement
         verticalVelocity = (player.position.y - previousPlayerPosition.y) / Time.deltaTime;
         previousPlayerPosition = player.position;
 
         // Target position with horizontal, vertical follow, and offset
-        Vector3 targetPos = new Vector3(
+        Vector3 targetPos = new(
             initialPosition.x + (player.position.x - initialPosition.x) * horizontalFollowAmount + playerOffset.x,
             initialPosition.y + (player.position.y - initialPosition.y) * verticalFollowAmount + playerOffset.y,
             initialPosition.z + playerOffset.z
@@ -80,7 +85,10 @@ public class EyeFollowPlayer_SmartSmooth : MonoBehaviour
             maxFollowSpeed
         );
 
-        // Always look at the player
-        transform.LookAt(player);
+       
+transform.LookAt(player);
+        
+
+       
     }
 }
