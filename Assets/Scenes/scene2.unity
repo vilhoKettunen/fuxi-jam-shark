@@ -3428,6 +3428,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Eye
       objectReference: {fileID: 0}
+    - target: {fileID: 2171149843244124785, guid: 40e95f588d79649488a87d1a5653b8d8, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5246352352582961635, guid: 40e95f588d79649488a87d1a5653b8d8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.68548304
@@ -3468,6 +3472,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5338258106845970711, guid: 40e95f588d79649488a87d1a5653b8d8, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6511749501210376824, guid: 40e95f588d79649488a87d1a5653b8d8, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
@@ -3492,6 +3500,10 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 421189065}
+    - target: {fileID: 8296354527981861867, guid: 40e95f588d79649488a87d1a5653b8d8, type: 3}
+      propertyPath: playerOffset.y
+      value: 50
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6942,7 +6954,7 @@ MonoBehaviour:
   target: {fileID: 421189065}
   smoothTime: 0.3
   offset: {x: 0, y: 2, z: -20}
-  lookAheadDistance: 2
+  lookAheadDistance: 0
   lookAheadSmoothTime: 0.3
 --- !u!4 &1579260746 stripped
 Transform:
@@ -8088,15 +8100,15 @@ MonoBehaviour:
   countdownSlider: {fileID: 2017251199}
   activeTimeSlider: {fileID: 395951590}
   totalTime: 30
-  randomCycleRange: {x: 5, y: 5}
+  randomCycleRange: {x: 5, y: 20}
   preBlinkTime: 6
   activeTime: 5
   blinkOnTime: 1
   blinkOffTime: 1
   playerObject: {fileID: 1995305198}
   eyeObject: {fileID: 242056161}
-  activeEyeOffset: 25
-  defaultEyeOffset: 4
+  activeEyeOffset: 4
+  defaultEyeOffset: 50
 --- !u!4 &1923273922 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7844490430767940893, guid: 329a6140f74c58b44aa06c686a584151, type: 3}
@@ -8822,7 +8834,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -8849,7 +8861,7 @@ GameObject:
   - component: {fileID: 5331547052156998668}
   - component: {fileID: 385775792720026886}
   - component: {fileID: 6870260110508052832}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: floor 3 (13)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8985,7 +8997,7 @@ Transform:
   m_GameObject: {fileID: 2921902371256081619}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 147, y: -2.5, z: 0}
+  m_LocalPosition: {x: 9.3, y: -2.5, z: 0}
   m_LocalScale: {x: 8.0841, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9003,7 +9015,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd925898dd43e2042aeb4dc76142e089, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneLoaderOnPlayerCollision
-  sceneToLoad: NextLevel
+  sceneToLoad: Samin scene
   loadDelay: 0
 --- !u!1001 &7105509946055814504
 PrefabInstance:
