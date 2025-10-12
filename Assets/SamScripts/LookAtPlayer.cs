@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Transform))]
-public class EyeFollowPlayer_SmartSmooth : MonoBehaviour
+public class LookAtPlayer : MonoBehaviour
 {
     [Header("References")]
     [Tooltip("The player transform the eye should follow.")]
@@ -36,8 +36,6 @@ public class EyeFollowPlayer_SmartSmooth : MonoBehaviour
     private Vector3 previousPlayerPosition;
     private float verticalVelocity;
 
-    
-
     void Start()
     {
         if (player == null)
@@ -53,8 +51,6 @@ public class EyeFollowPlayer_SmartSmooth : MonoBehaviour
 
     void LateUpdate()
     {
-
-        
         // Track player's vertical movement
         verticalVelocity = (player.position.y - previousPlayerPosition.y) / Time.deltaTime;
         previousPlayerPosition = player.position;
@@ -85,10 +81,12 @@ public class EyeFollowPlayer_SmartSmooth : MonoBehaviour
             maxFollowSpeed
         );
 
-       
-transform.LookAt(player);
-        
+        transform.LookAt(player);
+    }
 
-       
+    // Simple API to let other scripts change the eye's vertical offset
+    public void SetPlayerYOffset(float y)
+    {
+        playerOffset.y = y;
     }
 }
