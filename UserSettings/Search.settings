@@ -5,14 +5,10 @@ fetchPreview = true
 defaultFlags = 0
 keepOpen = true
 queryFolder = "Assets"
-onBoardingDoNotAskAgain = false
+onBoardingDoNotAskAgain = true
 showPackageIndexes = false
 showStatusBar = false
 scopes = {
-	"picker_window_position_offset.00000000" = "80,66663;36,66666;320;550"
-	"picker_visibility_flags.00000000" = "0"
-	"picker_item_size.00000000" = "1"
-	"picker_inspector.00000000" = "0"
 }
 providers = {
 	asset = {
@@ -45,12 +41,12 @@ providers = {
 		priority = 90
 		defaultAction = null
 	}
-	profilermarkers = {
+	performance = {
 		active = false
 		priority = 100
 		defaultAction = null
 	}
-	performance = {
+	profilermarkers = {
 		active = false
 		priority = 100
 		defaultAction = null
@@ -83,4 +79,3 @@ helperWidgetCurrentArea = "all"
 disabledIndexers = ""
 minIndexVariations = 2
 findProviderIndexHelper = true
-itemIconSize = 32
