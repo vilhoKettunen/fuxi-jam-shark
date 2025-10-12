@@ -6,12 +6,18 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/scene1.unity
+    guid: cacb9f7b85db24848a267b57ec29584f
+  - enabled: 1
+    path: Assets/Scenes/scene2.unity
+    guid: a94647919fe35b64e8c0e353b92a2acc
+  - enabled: 1
     path: Assets/Scenes/Samin scene.unity
     guid: 4017c7e7ecf543248bfb02b99dd22c97
   - enabled: 0
     path: Assets/Scenes/Sample.unity
     guid: 99c9720ab356a0642a771bea13969a05
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/vilho.unity
     guid: e172c713059c2a748b1fce336acaa780
   - enabled: 1
