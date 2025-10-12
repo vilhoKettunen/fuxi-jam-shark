@@ -8081,11 +8081,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57c85054bf709e243b804970055f7723, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BlinkTimerController
-  blinkObjects: []
+  blinkObjects:
+  - {fileID: 467831457}
+  - {fileID: 651762389}
+  - {fileID: 869928374}
   countdownSlider: {fileID: 2017251199}
   activeTimeSlider: {fileID: 395951590}
   totalTime: 30
-  randomCycleRange: {x: 5, y: 20}
+  randomCycleRange: {x: 5, y: 5}
   preBlinkTime: 6
   activeTime: 5
   blinkOnTime: 1
@@ -8982,7 +8985,7 @@ Transform:
   m_GameObject: {fileID: 2921902371256081619}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 152.39915, y: -2.9725852, z: 0}
+  m_LocalPosition: {x: 147, y: -2.5, z: 0}
   m_LocalScale: {x: 8.0841, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
