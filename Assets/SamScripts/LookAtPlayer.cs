@@ -6,7 +6,6 @@ public class LookAtPlayer : MonoBehaviour
     [Header("References")]
     [Tooltip("The player transform the eye should follow.")]
     public Transform player;
-  
 
     [Header("Follow Settings")]
     [Tooltip("Base smooth time (lower = tighter, higher = smoother).")]
@@ -21,6 +20,9 @@ public class LookAtPlayer : MonoBehaviour
     [Header("Position Offset")]
     [Tooltip("Offset from the player's position (e.g., to be above the player).")]
     public Vector3 playerOffset = new Vector3(0f, 1f, 0f);
+
+    [Tooltip("How fast the Y offset transitions when changed.")]
+    public float offsetLerpSpeed = 3f;
 
     [Tooltip("How much faster the eye follows when player is falling.")]
     public float fallSpeedMultiplier = 1.5f;
@@ -47,6 +49,19 @@ public class LookAtPlayer : MonoBehaviour
 
         initialPosition = transform.position;
         previousPlayerPosition = player.position;
+        targetYOffset = playerOffset.y;
+    }
+
+    void Update()
+    {
+        // 🔹 Debug control — press L to cycle between preset Y offsets
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            currentDebugIndex = (currentDebugIndex + 1) % debugHeights.Length;
+            float newValue = debugHeights[currentDebugIndex];
+            SetPlayerYOffset(newValue);
+            Debug.Log($"[EyeFollowPlayer_SmartSmooth] Debug Y Offset changed to: {newValue}");
+        }
     }
 
     void LateUpdate()
@@ -68,7 +83,7 @@ public class LookAtPlayer : MonoBehaviour
         // Adaptive smooth time
         float smoothTime = baseSmoothTime;
         if (distance > catchUpDistance)
-            smoothTime *= 0.5f; // tighten catch-up
+            smoothTime *= 0.5f;
         if (verticalVelocity < -0.1f)
             smoothTime /= fallSpeedMultiplier;
 
