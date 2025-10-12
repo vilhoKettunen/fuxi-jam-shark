@@ -3,24 +3,42 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BlinkTimerController : MonoBehaviour
+public class TimeController : MonoBehaviour
 {
     [Header("UI Elements")]
+    [Tooltip("Colored UI blocks that will blink before activation.")]
     public List<GameObject> blinkObjects = new List<GameObject>();
     public Slider countdownSlider;
     public Slider activeTimeSlider;
 
     [Header("Timing Settings")]
+    [Tooltip("Total time (in seconds) until activation.")]
     public float totalTime = 30f;
+    [Tooltip("Random time range for the next cycle (min & max).")]
     public Vector2 randomCycleRange = new Vector2(20f, 40f);
+    [Tooltip("Time (in seconds) before activation when blinking starts.")]
     public float preBlinkTime = 6f;
+    [Tooltip("How long the system stays 'active' after activation (seconds).")]
     public float activeTime = 5f;
+    [Tooltip("How long each color stays ON during blinking.")]
     public float blinkOnTime = 1f;
+    [Tooltip("How long all colors stay OFF during blinking.")]
     public float blinkOffTime = 1f;
 
     [Header("Player Settings")]
-    [Tooltip("Tag of the player object to affect")]
+    [Tooltip("Tag of the player object to affect.")]
     public string playerTag = "Player";
+
+    [Header("Eye Settings")]
+    [Tooltip("Drag your Eye GameObject here (must have EyeFollowPlayer_SmartSmooth component).")]
+    public GameObject eyeObject;
+    [Tooltip("Offset value when active phase starts.")]
+    public float activeEyeOffset = 4f;
+    [Tooltip("Offset value when active phase ends.")]
+    public float defaultEyeOffset = 50f;
+
+    // Cached reference to the eye follow script
+    private LookAtPlayer eyeFollow;
 
     private float countdownTimer;
     private float activeTimer;
@@ -28,23 +46,31 @@ public class BlinkTimerController : MonoBehaviour
     private bool isActive = false;
     private int currentBlinkIndex = 0;
 
-    private Coroutine activePhaseLoop; // 🔁 Reference to active loop coroutine
+    private Coroutine activePhaseLoop;
 
     private void Start()
     {
+        // Auto-get the eye follow script
+        if (eyeObject != null)
+        {
+            eyeFollow = eyeObject.GetComponent<LookAtPlayer>();
+            if (eyeFollow == null)
+                Debug.LogWarning("⚠️ The Eye Object does not have an EyeFollowPlayer_SmartSmooth component!");
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ No Eye Object assigned in TimeController!");
+        }
+
         StartNewCycle();
     }
 
     private void Update()
     {
         if (!isActive)
-        {
             HandleCountdownPhase();
-        }
         else
-        {
             HandleActivePhase();
-        }
     }
 
     private void HandleCountdownPhase()
@@ -63,9 +89,7 @@ public class BlinkTimerController : MonoBehaviour
 
         // Trigger activation
         if (countdownTimer <= 0)
-        {
             ActivationEvent();
-        }
     }
 
     private void HandleActivePhase()
@@ -76,9 +100,7 @@ public class BlinkTimerController : MonoBehaviour
             activeTimeSlider.value = activeTimer;
 
         if (activeTimer <= 0)
-        {
             EndActivePhase();
-        }
     }
 
     private void StartNewCycle()
@@ -111,11 +133,14 @@ public class BlinkTimerController : MonoBehaviour
     {
         while (!isActive)
         {
-            if (blinkObjects.Count == 0)
+            if (blinkObjects == null || blinkObjects.Count == 0)
                 yield break;
 
             SetAllBlinkObjectsActive(false);
-            blinkObjects[currentBlinkIndex].SetActive(true);
+
+            if (blinkObjects[currentBlinkIndex] != null)
+                blinkObjects[currentBlinkIndex].SetActive(true);
+
             yield return new WaitForSeconds(blinkOnTime);
 
             SetAllBlinkObjectsActive(false);
@@ -129,6 +154,7 @@ public class BlinkTimerController : MonoBehaviour
     {
         Debug.Log("🔔 Activation triggered!");
         isActive = true;
+
         StopAllCoroutines(); // stop blinking
         SetAllBlinkObjectsActive(true);
 
@@ -137,7 +163,14 @@ public class BlinkTimerController : MonoBehaviour
         if (activeTimeSlider != null)
             activeTimeSlider.value = activeTimer;
 
-        // 🔁 Start listening for input that kills player
+        // Set eye offset
+        if (eyeFollow != null)
+        {
+            eyeFollow.SetPlayerYOffset(activeEyeOffset);
+            Debug.Log($"👁️ Eye offset set to {activeEyeOffset}");
+        }
+
+        // Start input detection loop
         if (activePhaseLoop != null)
             StopCoroutine(activePhaseLoop);
         activePhaseLoop = StartCoroutine(ActivePhaseInputLoop());
@@ -148,68 +181,66 @@ public class BlinkTimerController : MonoBehaviour
         Debug.Log("🔁 Active time ended, restarting cycle.");
         isActive = false;
 
-        // Stop input loop
         if (activePhaseLoop != null)
         {
             StopCoroutine(activePhaseLoop);
             activePhaseLoop = null;
         }
 
+        // Reset eye offset
+        if (eyeFollow != null)
+        {
+            eyeFollow.SetPlayerYOffset(defaultEyeOffset);
+            Debug.Log($"👁️ Eye offset reset to {defaultEyeOffset}");
+        }
+
         SetAllBlinkObjectsActive(false);
         StartNewCycle();
     }
 
-    /// <summary>
-    /// 🔁 Runs while active phase is ongoing.
-    /// Checks for player input and triggers death if detected.
-    /// </summary>
     private IEnumerator ActivePhaseInputLoop()
     {
         Debug.Log("🎯 Input detection loop started.");
 
         while (isActive)
         {
-            // Check for any key or button press
             if (Input.anyKeyDown)
             {
                 Debug.Log("💀 Player pressed a button during active phase — triggering death!");
                 TriggerPlayerDeath();
-                break; // End loop after triggering death
+                break;
             }
-
-            yield return null; // wait for next frame
+            yield return null;
         }
 
         Debug.Log("⛔ Input detection loop ended.");
     }
 
-    /// <summary>
-    /// Finds the player and triggers their death handler.
-    /// </summary>
     private void TriggerPlayerDeath()
     {
         GameObject player = GameObject.FindGameObjectWithTag(playerTag);
-        if (player != null)
+        if (player == null)
         {
-            PlayerDeathHandler deathHandler = player.GetComponent<PlayerDeathHandler>();
-            if (deathHandler != null)
-            {
-                StartCoroutine(deathHandler.HandleDeath());
-            }
-            else
-            {
-                Debug.LogWarning("⚠️ Player does not have a PlayerDeathHandler component!");
-            }
+            Debug.LogWarning($"⚠️ No GameObject with tag '{playerTag}' found!");
+            return;
+        }
+
+        PlayerDeathHandler deathHandler = player.GetComponent<PlayerDeathHandler>();
+        if (deathHandler != null)
+        {
+            StartCoroutine(deathHandler.HandleDeath());
         }
         else
         {
-            Debug.LogWarning("⚠️ No GameObject with tag '" + playerTag + "' found!");
+            Debug.LogWarning("⚠️ Player does not have a PlayerDeathHandler component!");
         }
     }
 
     private void SetAllBlinkObjectsActive(bool active)
     {
-        foreach (var obj in blinkObjects)
+        if (blinkObjects == null) return;
+
+        foreach (GameObject obj in blinkObjects)
         {
             if (obj != null)
                 obj.SetActive(active);
